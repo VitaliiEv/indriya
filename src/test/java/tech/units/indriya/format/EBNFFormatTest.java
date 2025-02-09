@@ -212,4 +212,12 @@ public class EBNFFormatTest {
 		final Unit<?> mtr = privateFormat.parse("e");
 		assertEquals(mtr, METRE);
 	}
+
+	@Test
+	public void testFormatTransformedMass() {
+		Unit<Mass> m = new TransformedUnit<Mass>(KILOGRAM, MultiplyConverter.ofRational(1000, 1));
+		final String s = format.format(m);
+		assertEquals("kg·1000", s);
+	}
+
 }
