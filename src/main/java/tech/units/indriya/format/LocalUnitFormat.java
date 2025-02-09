@@ -363,6 +363,9 @@ public class LocalUnitFormat extends AbstractUnitFormat {
       int unitPrecedence = NOOP_PRECEDENCE;
       Unit<?> parentUnit = unit.getSystemUnit();
       converter = ((AbstractUnit<?>) unit).getSystemConverter();
+	  if (unit instanceof TransformedUnit) {
+		converter = ((TransformedUnit<?>) unit).getConverter();
+	  }
       if (KILOGRAM.equals(parentUnit)) {
         // More special-case hackery to work around gram/kilogram
         // incosistency
@@ -371,11 +374,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
           return NOOP_PRECEDENCE;
         }
         parentUnit = GRAM;
-        if (unit instanceof TransformedUnit<?>) {
-          converter = ((TransformedUnit<?>) unit).getConverter();
-        } else {
-          converter = unit.getConverterTo((Unit) GRAM);
-        }
+	    converter = unit.getConverterTo((Unit) GRAM);
       } else if (CUBIC_METRE.equals(parentUnit)) {
         if (converter != null) {
           parentUnit = LITRE;
@@ -386,8 +385,6 @@ public class LocalUnitFormat extends AbstractUnitFormat {
         TransformedUnit<?> transUnit = (TransformedUnit<?>) unit;
         if (parentUnit == null)
           parentUnit = transUnit.getParentUnit();
-        // String x = parentUnit.toString();
-        converter = transUnit.getConverter();
       }
 
       unitPrecedence = formatInternal(parentUnit, temp);
