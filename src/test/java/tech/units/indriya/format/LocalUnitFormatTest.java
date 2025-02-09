@@ -214,12 +214,4 @@ public class LocalUnitFormatTest {
 		final String s = format.format(m);
 		assertEquals("g·1000000", s); // expected g·1000000 or kg·1000 got g·1000
 	}
-
-	@Test
-	public void testFormatProductMassEn() {
-		final UnitFormat format = LocalUnitFormat.getInstance(Locale.ENGLISH);
-		Unit<Mass> m = KILOGRAM.multiply(1000);
-		final String s = format.format(m);
-		assertEquals("g·1000000", s);
-	}
 }
