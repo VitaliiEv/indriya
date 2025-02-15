@@ -81,7 +81,7 @@ import static tech.units.indriya.format.FormatConstants.MIDDLE_DOT;
  * @author <a href="mailto:werner@units.tech">Werner Keil</a>
  * @author Eric Russell
  * @author Andi Huber
- * @version 2.15, Nov 24, 2024
+ * @version 2.18, Jan 29, 2025
  * @since 1.0
  */
 public abstract class SimpleUnitFormat extends AbstractUnitFormat {
@@ -94,7 +94,7 @@ public abstract class SimpleUnitFormat extends AbstractUnitFormat {
      *
      */
     public static enum Flavor {
-        /** @deprecated use DEFAULT_INSTANCE */
+        /** @deprecated use DEFAULT */
          Default, 
          /** The default format flavor */
          DEFAULT, 
@@ -438,16 +438,22 @@ public abstract class SimpleUnitFormat extends AbstractUnitFormat {
             // Special case for DEGREE_CELSIUS.
             labelWithPrefixes(Units.CELSIUS, "℃");
             aliasWithPrefixes(Units.CELSIUS, "°C");
+            
             // Additional cases and aliases
+            label(AbstractUnit.ONE, "one");
             label(Units.PERCENT, "%");
-            labelWithPrefixes(Units.MINUTE, "min");
-            labelWithPrefixes(Units.HOUR, "h");
-            labelWithPrefixes(Units.DAY, "d");
-            aliasWithPrefixes(Units.DAY, "day");
-            labelWithPrefixes(Units.WEEK, "wk");
-            aliasWithPrefixes(Units.WEEK, "week");
+            
+            // https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI#Units_officially_accepted_for_use_with_the_SI
+            // The SI prefixes can be used with several of these units, but not, for example, with the non-SI units of time.
+            // Also see https://github.com/unitsofmeasurement/indriya/issues/433 
+            label(Units.MINUTE, "min");
+            label(Units.HOUR, "h");
+            label(Units.DAY, "d");
+            alias(Units.DAY, "day");
+            label(Units.WEEK, "wk");
+            alias(Units.WEEK, "week");
             label(Units.YEAR, "yr");
-            alias(Units.YEAR, "y");
+            alias(Units.YEAR, "y"); 
             alias(Units.YEAR, "year");
             alias(Units.YEAR, "days365");
             alias(Units.YEAR, "a");
@@ -460,12 +466,6 @@ public abstract class SimpleUnitFormat extends AbstractUnitFormat {
             labelWithPrefixes(Units.CUBIC_METRE, "\u33A5");
             aliasWithPrefixes(Units.CUBIC_METRE, "m3");
             labelWithPrefixes(Units.LITRE, "l");
-
-            label(AbstractUnit.ONE, "one");
-            //label(Units.NEWTON, "N");
-            //label(Units.RADIAN, "rad");
-            //label(Units.METRE, "m");
-            //label(Units.SECOND, "s");
 
             return this;
         }

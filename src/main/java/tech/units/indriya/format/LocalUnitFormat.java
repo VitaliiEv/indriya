@@ -156,7 +156,7 @@ import java.util.ResourceBundle;
  *
  * @author <a href="mailto:eric-r@northwestern.edu">Eric Russell</a>
  * @author <a href="mailto:werner@units.tech">Werner Keil</a>
- * @version 1.6, October 4, 2024
+ * @version 1.7, February 9, 2025
  * @since 1.0
  */
 public class LocalUnitFormat extends AbstractUnitFormat {
@@ -182,7 +182,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
 
   /**
    * Returns an instance for the given locale.
-   * 
+   *
    * @param locale the locale to use
    */
   public static LocalUnitFormat getInstance(Locale locale) {
@@ -220,13 +220,13 @@ public class LocalUnitFormat extends AbstractUnitFormat {
   ////////////////////////
   /**
    * Get the symbol map used by this instance to map between {@link AbstractUnit Unit}s and <code>String</code>s, etc...
-   * 
+   *
    * @return SymbolMap the current symbol map
    */
   protected SymbolMap getSymbols() {
     return symbolMap;
   }
-  
+
   @Override
   public String toString() {
     return getClass().getSimpleName();
@@ -293,7 +293,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
   /**
    * Format the given unit to the given StringBuilder, then return the operator precedence of the outermost operator in the unit expression that was
    * formatted. See {@link ConverterFormat} for the constants that define the various precedence values.
-   * 
+   *
    * @param unit
    *          the unit to be formatted
    * @param buffer
@@ -363,9 +363,6 @@ public class LocalUnitFormat extends AbstractUnitFormat {
       int unitPrecedence = NOOP_PRECEDENCE;
       Unit<?> parentUnit = unit.getSystemUnit();
       converter = ((AbstractUnit<?>) unit).getSystemConverter();
-	  if (unit instanceof TransformedUnit) {
-		converter = ((TransformedUnit<?>) unit).getConverter();
-	  }
       if (KILOGRAM.equals(parentUnit)) {
         // More special-case hackery to work around gram/kilogram
         // incosistency
@@ -374,7 +371,11 @@ public class LocalUnitFormat extends AbstractUnitFormat {
           return NOOP_PRECEDENCE;
         }
         parentUnit = GRAM;
-	    converter = unit.getConverterTo((Unit) GRAM);
+        if (unit instanceof TransformedUnit<?>) {
+          converter = ((TransformedUnit<?>) unit).getConverter();
+        } else {
+          converter = unit.getConverterTo((Unit) GRAM);
+        }
       } else if (CUBIC_METRE.equals(parentUnit)) {
         if (converter != null) {
           parentUnit = LITRE;
@@ -382,9 +383,15 @@ public class LocalUnitFormat extends AbstractUnitFormat {
       }
 
       if (unit instanceof TransformedUnit) {
-        TransformedUnit<?> transUnit = (TransformedUnit<?>) unit;
-        if (parentUnit == null)
-          parentUnit = transUnit.getParentUnit();
+          TransformedUnit<?> transUnit = (TransformedUnit<?>) unit;
+          if (parentUnit == null) {
+          	parentUnit = transUnit.getParentUnit();
+          } else {
+          	if (transUnit.getParentUnit() != null) {
+          		parentUnit =  transUnit.getParentUnit();
+          	}
+          }
+          converter = transUnit.getConverter();
       }
 
       unitPrecedence = formatInternal(parentUnit, temp);
@@ -397,7 +404,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
 
   /**
    * Format the given unit raised to the given fractional power to the given <code>StringBuffer</code>.
-   * 
+   *
    * @param unit
    *          Unit the unit to be formatted
    * @param pow
