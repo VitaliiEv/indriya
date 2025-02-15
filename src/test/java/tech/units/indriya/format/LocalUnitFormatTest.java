@@ -44,6 +44,8 @@ import javax.measure.quantity.Mass;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tech.units.indriya.function.MultiplyConverter;
+import tech.units.indriya.unit.TransformedUnit;
 
 import tech.units.indriya.function.MultiplyConverter;
 import tech.units.indriya.unit.TransformedUnit;
@@ -55,7 +57,7 @@ import tech.units.indriya.unit.TransformedUnit;
 // TODO put those tests on a separate tag like "slow", "heavy", etc.
 @Tag("l10n")
 public class LocalUnitFormatTest {
-	private static final Logger logger = Logger.getLogger(SimpleUnitFormatTest.class.getName());
+	private static final Logger logger = Logger.getLogger(LocalUnitFormatTest.class.getName());
 	private static final Level LOG_LEVEL = Level.FINER;
 
 	@Test
@@ -87,7 +89,7 @@ public class LocalUnitFormatTest {
 		String s = format.format(KILO(METRE));
 		assertEquals("km", s);
 	}
-	
+
 	@Test
 	public void testFormatKmCn() {
 		final UnitFormat localFormat = LocalUnitFormat.getInstance(new Locale("cn"));
@@ -100,7 +102,7 @@ public class LocalUnitFormatTest {
 		final UnitFormat format = LocalUnitFormat.getInstance();
 		assertEquals("N", format.format(NEWTON));
 	}
-	
+
 	@Test
 	public void testFormatMm() {
 		final UnitFormat format = LocalUnitFormat.getInstance();
@@ -114,7 +116,7 @@ public class LocalUnitFormatTest {
 		final String s = format.format(MILLI(NEWTON));
 		assertEquals("mN", s);
 	}
-	
+
 	@Test
 	public void testParseIrregularStringLocal() {
 		assertThrows(IllegalArgumentException.class, () -> { // TODO should behave like EBNFUnitFormat (throwing a
@@ -124,88 +126,104 @@ public class LocalUnitFormatTest {
 			Unit<?> u = format.parse("bl//^--1a");
 		});
 	}
-	
+
 	@Test
 	public void testFormatKmHDe() {
 		final UnitFormat format = LocalUnitFormat.getInstance(Locale.GERMAN);
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("km/h", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHSv() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("sv"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("km/t", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHNbNO() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("nb", "NO"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("km/t", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHNoNO() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("no", "NO"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("km/t", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHIN() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("en", "IN"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("kmph", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHID() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("en", "ID"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("km/j", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHMY() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("en", "MY"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("km/j", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHTH() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("th", "TH"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("กม./ชม.", s);
 	}
-	
+
 	@Test
 	public void testFormatKmHAr() {
 		final UnitFormat format = LocalUnitFormat.getInstance(new Locale("ar"));
 		String s = format.format(KILOMETRE_PER_HOUR);
 		assertEquals("كم/س", s);
 	}
-	
+
 	@Test
 	public void testFormatDayDe() {
 		final UnitFormat format = LocalUnitFormat.getInstance(Locale.GERMAN);
 		String s = format.format(DAY);
 		assertEquals("tag", s);
 	}
-	
+
 	@Test
 	public void testFormatWeekDe() {
 		final UnitFormat format = LocalUnitFormat.getInstance(Locale.GERMAN);
 		String s = format.format(WEEK);
 		assertEquals("wo", s);
 	}
-	
+
 	@Test
 	public void testFormatYearDe() {
 		final UnitFormat format = LocalUnitFormat.getInstance(Locale.GERMAN);
 		String s = format.format(YEAR);
 		assertEquals("jr", s);
+	}
+
+	@Test
+	public void testFormatTransformedMassEn() {
+		final UnitFormat format = LocalUnitFormat.getInstance(Locale.ENGLISH);
+		Unit<Mass> m = new TransformedUnit<Mass>(KILOGRAM, MultiplyConverter.ofRational(1000, 1));
+		final String s = format.format(m);
+		assertEquals("g·1000000", s); // expected g·1000000, kg·1000 got g·1000
+	}
+
+	@Test
+	public void testFormatTransformedMassDe() {
+		final UnitFormat format = LocalUnitFormat.getInstance(Locale.GERMAN);
+		Unit<Mass> m = new TransformedUnit<Mass>(KILOGRAM, MultiplyConverter.ofRational(1000, 1));
+		final String s = format.format(m);
+		assertEquals("g·1000000", s); // expected g·1000000 or kg·1000 got g·1000
 	}
 }

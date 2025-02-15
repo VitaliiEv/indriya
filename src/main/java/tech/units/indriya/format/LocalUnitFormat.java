@@ -182,7 +182,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
 
   /**
    * Returns an instance for the given locale.
-   * 
+   *
    * @param locale the locale to use
    */
   public static LocalUnitFormat getInstance(Locale locale) {
@@ -220,13 +220,13 @@ public class LocalUnitFormat extends AbstractUnitFormat {
   ////////////////////////
   /**
    * Get the symbol map used by this instance to map between {@link AbstractUnit Unit}s and <code>String</code>s, etc...
-   * 
+   *
    * @return SymbolMap the current symbol map
    */
   protected SymbolMap getSymbols() {
     return symbolMap;
   }
-  
+
   @Override
   public String toString() {
     return getClass().getSimpleName();
@@ -293,7 +293,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
   /**
    * Format the given unit to the given StringBuilder, then return the operator precedence of the outermost operator in the unit expression that was
    * formatted. See {@link ConverterFormat} for the constants that define the various precedence values.
-   * 
+   *
    * @param unit
    *          the unit to be formatted
    * @param buffer
@@ -404,7 +404,7 @@ public class LocalUnitFormat extends AbstractUnitFormat {
 
   /**
    * Format the given unit raised to the given fractional power to the given <code>StringBuffer</code>.
-   * 
+   *
    * @param unit
    *          Unit the unit to be formatted
    * @param pow
